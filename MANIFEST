@@ -1,0 +1,8 @@
+Changes
+Makefile.PL
+MANIFEST
+ppport.h
+Puzzle.xs
+README
+t/Puzzle.t
+lib/Puzzle.pm
