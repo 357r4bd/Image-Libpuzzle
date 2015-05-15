@@ -1,6 +1,6 @@
 
 use ExtUtils::testlib;
-
+use lib './lib';
 use Puzzle;
 
 Puzzle::hello();

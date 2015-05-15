@@ -14,25 +14,118 @@ hello()
         printf("Hello, world!\n");
 
 int
-print_puzzle_fill_cvec_from_file(filename)
-    char * filename
+puzzle_new(klass, file)
+    char *klass
+    char *file
+
     CODE:
-      PuzzleContext context;
-      PuzzleCvec cvec1;
-      double d;
-      puzzle_init_context(&context);
-      puzzle_init_cvec(&context, &cvec1);
-      RETVAL=puzzle_fill_cvec_from_file(&context, &cvec1, filename);
-      size_t remaining;
-      int c2;
-      remaining = cvec1.sizeof_vec;
-      do {
-        remaining--;
-        c2 = (int) cvec1.vec[remaining];
-        printf("%u",cvec1.vec[remaining]);
-      } while (remaining > (size_t) 0U);
-      printf("\n");
-      puzzle_free_cvec(&context, &cvec1);
-      puzzle_free_context(&context);
+      RETVAL = 1;
+
+    OUTPUT:
+      RETVAL
+
+void
+puzzle_fill_cvec_from_file(file)
+    char *file;
+
+    CODE:
+      printf("hi\n");
+
+int
+puzzle_compress_cvec()
+
+    CODE:
+      RETVAL = 1;
+
+    OUTPUT:
+      RETVAL
+
+int
+puzzle_uncompress_cvec()
+
+    CODE:
+      RETVAL = 1;
+
+    OUTPUT:
+      RETVAL
+
+double
+puzzle_vector_normalized_distance()
+
+    CODE:
+      RETVAL = 1;
+
+    OUTPUT:
+      RETVAL
+
+int
+puzzle_set_p_ratio()
+
+    CODE:
+      RETVAL = 1;
+
+    OUTPUT:
+      RETVAL
+
+int
+puzzle_set_lambdas()
+
+    CODE:
+      RETVAL = 1;
+
+    OUTPUT:
+      RETVAL
+
+int
+puzzle_set_max_width()
+
+    CODE:
+      RETVAL = 1;
+
+    OUTPUT:
+      RETVAL
+
+int
+puzzle_set_max_height()
+
+    CODE:
+      RETVAL = 1;
+
+    OUTPUT:
+      RETVAL
+
+int
+puzzle_set_noise_cutoff()
+
+    CODE:
+      RETVAL = 1;
+
+    OUTPUT:
+      RETVAL
+
+int
+puzzle_set_contrast_barrier_for_cropping()
+
+    CODE:
+      RETVAL = 1;
+
+    OUTPUT:
+      RETVAL
+
+int
+puzzle_set_max_cropping_ratio()
+
+    CODE:
+      RETVAL = 1;
+
+    OUTPUT:
+      RETVAL
+
+int
+puzzle_set_autocrop()
+
+    CODE:
+      RETVAL = 1;
+
     OUTPUT:
       RETVAL
