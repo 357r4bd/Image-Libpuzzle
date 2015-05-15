@@ -6,7 +6,7 @@
 #include "ppport.h"
 
 
-MODULE = Puzzle		PACKAGE = Puzzle		
+MODULE = Puzzle		PACKAGE = Puzzle	PREFIX = puzzle_
 
 void
 hello()
