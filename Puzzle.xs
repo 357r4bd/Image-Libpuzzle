@@ -1,3 +1,7 @@
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
@@ -5,127 +9,50 @@
 
 #include "ppport.h"
 
+typedef PuzzleContext * Alien__Puzzle;
 
-MODULE = Puzzle		PACKAGE = Puzzle	PREFIX = puzzle_
+MODULE = Alien::Puzzle	PACKAGE = Alien::Puzzle	PREFIX = puzzle_
 
-void
-hello()
-    CODE:
-        printf("Hello, world!\n");
-
-int
-puzzle_new(klass, file)
+Alien::Puzzle
+puzzle_new(klass)
     char *klass
-    char *file
 
     CODE:
-      RETVAL = 1;
+      PuzzleContext *context;
+
+      if ((context = malloc(sizeof(*context))) == NULL) {
+          croak("Unable to allocate PuzzleContext: %s", strerror(errno));
+      }
+
+      puzzle_init_context(context);
+
+      RETVAL = context;
+
+    OUTPUT:
+      RETVAL
+
+SV *
+puzzle_get_file_signature(context, filename)
+    Alien::Puzzle context
+    char *filename
+
+    CODE:
+      PuzzleCvec cvec;
+
+      puzzle_init_cvec(context, &cvec);
+
+      if (puzzle_fill_cvec_from_file(context, &cvec, filename) < 0) {
+          croak("Unable to fill CVEC from file %s: %s", filename, strerror(errno));
+      }
+
+      RETVAL = newSVpv((char *)cvec.vec, cvec.sizeof_vec);
 
     OUTPUT:
       RETVAL
 
 void
-puzzle_fill_cvec_from_file(file)
-    char *file;
+puzzle_DESTROY(context)
+    Alien::Puzzle context
 
     CODE:
-      printf("hi\n");
-
-int
-puzzle_compress_cvec()
-
-    CODE:
-      RETVAL = 1;
-
-    OUTPUT:
-      RETVAL
-
-int
-puzzle_uncompress_cvec()
-
-    CODE:
-      RETVAL = 1;
-
-    OUTPUT:
-      RETVAL
-
-double
-puzzle_vector_normalized_distance()
-
-    CODE:
-      RETVAL = 1;
-
-    OUTPUT:
-      RETVAL
-
-int
-puzzle_set_p_ratio()
-
-    CODE:
-      RETVAL = 1;
-
-    OUTPUT:
-      RETVAL
-
-int
-puzzle_set_lambdas()
-
-    CODE:
-      RETVAL = 1;
-
-    OUTPUT:
-      RETVAL
-
-int
-puzzle_set_max_width()
-
-    CODE:
-      RETVAL = 1;
-
-    OUTPUT:
-      RETVAL
-
-int
-puzzle_set_max_height()
-
-    CODE:
-      RETVAL = 1;
-
-    OUTPUT:
-      RETVAL
-
-int
-puzzle_set_noise_cutoff()
-
-    CODE:
-      RETVAL = 1;
-
-    OUTPUT:
-      RETVAL
-
-int
-puzzle_set_contrast_barrier_for_cropping()
-
-    CODE:
-      RETVAL = 1;
-
-    OUTPUT:
-      RETVAL
-
-int
-puzzle_set_max_cropping_ratio()
-
-    CODE:
-      RETVAL = 1;
-
-    OUTPUT:
-      RETVAL
-
-int
-puzzle_set_autocrop()
-
-    CODE:
-      RETVAL = 1;
-
-    OUTPUT:
-      RETVAL
+      free(context);

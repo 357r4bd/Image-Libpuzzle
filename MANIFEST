@@ -5,4 +5,4 @@ ppport.h
 Puzzle.xs
 README
 t/Puzzle.t
-lib/Puzzle.pm
+lib/Alien/Puzzle.pm

@@ -1,4 +1,4 @@
-package Puzzle;
+package Alien::Puzzle;
 
 use 5.014004;
 use strict;
@@ -28,7 +28,7 @@ our @EXPORT = qw(
 our $VERSION = '0.01';
 
 require XSLoader;
-XSLoader::load('Puzzle', $VERSION);
+XSLoader::load('Alien::Puzzle', $VERSION);
 
 # Preloaded methods go here.
 
@@ -38,7 +38,7 @@ __END__
 
 =head1 NAME
 
-Puzzle - Perl extension for blah blah blah
+Alien::Puzzle - Perl interface to libpuzzle. 
 
 =head1 SYNOPSIS
 

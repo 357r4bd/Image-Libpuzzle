@@ -1,7 +1,14 @@
 
 use ExtUtils::testlib;
 use lib './lib';
-use Puzzle;
+use Alien::Puzzle;
 
-Puzzle::hello();
-Puzzle::print_puzzle_fill_cvec_from_file('../../php/libpuzzle/tests/pics/pic-a-0.jpg');
+use Devel::Peek;
+use Data::Dumper ();
+
+my $p = Alien::Puzzle->new;
+
+print $p->get_file_signature('./test.jpg');
+
+#Dump($p);
+#print Data::Dumper::Dumper($p);
