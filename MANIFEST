@@ -2,7 +2,7 @@ Changes
 Makefile.PL
 MANIFEST
 ppport.h
-Puzzle.xs
+Libpuzzle.xs
 README
 t/Puzzle.t
-lib/Alien/Puzzle.pm
+lib/Image/Libpuzzle.pm

@@ -9,11 +9,11 @@
 
 #include "ppport.h"
 
-typedef PuzzleContext * Alien__Puzzle;
+typedef PuzzleContext * Image__Libpuzzle;
 
-MODULE = Alien::Puzzle	PACKAGE = Alien::Puzzle	PREFIX = puzzle_
+MODULE = Image::Libpuzzle	PACKAGE = Image::Libpuzzle	PREFIX = puzzle_
 
-Alien::Puzzle
+Image::Libpuzzle
 puzzle_new(klass)
     char *klass
 
@@ -33,7 +33,7 @@ puzzle_new(klass)
 
 SV *
 puzzle_get_file_signature(context, filename)
-    Alien::Puzzle context
+    Image::Libpuzzle context
     char *filename
 
     CODE:
@@ -52,7 +52,7 @@ puzzle_get_file_signature(context, filename)
 
 void
 puzzle_DESTROY(context)
-    Alien::Puzzle context
+    Image::Libpuzzle context
 
     CODE:
       free(context);

@@ -1,12 +1,12 @@
 
 use ExtUtils::testlib;
 use lib './lib';
-use Alien::Puzzle;
+use Image::Libpuzzle; 
 
 use Devel::Peek;
 use Data::Dumper ();
 
-my $p = Alien::Puzzle->new;
+my $p = Image::Libpuzzle->new; 
 
 print $p->get_file_signature('./test.jpg');
 

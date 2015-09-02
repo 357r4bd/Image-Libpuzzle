@@ -3,11 +3,11 @@ use ExtUtils::MakeMaker;
 # See lib/ExtUtils/MakeMaker.pm for details of how to influence
 # the contents of the Makefile that is written.
 WriteMakefile(
-    NAME              => 'Alien::Puzzle',
-    VERSION_FROM      => 'lib/Alien/Puzzle.pm', # finds $VERSION
+    NAME              => 'Image::Libpuzzle',
+    VERSION_FROM      => 'lib/Image/Libpuzzle.pm', # finds $VERSION
     PREREQ_PM         => {}, # e.g., Module::Name => 1.1
     ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
-      (ABSTRACT_FROM  => 'lib/Alien/Puzzle.pm', # retrieve abstract from module
+      (ABSTRACT_FROM  => 'lib/Image/Libpuzzle.pm', # retrieve abstract from module
        AUTHOR         => 'B. Estrade <estrabd@gmail.com>') : ()),
     LIBS              => ['-lpuzzle -lgd'], # e.g., '-lm'
     DEFINE            => '', # e.g., '-DHAVE_SOMETHING'
