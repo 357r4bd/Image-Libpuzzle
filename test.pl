@@ -14,7 +14,7 @@ my $sig = $p->get_signature_from_file('./test.jpg');
 
 # TODO, how to convert $sig to something meaningful?
 
-print $sig;
+print unpack("C*", $sig);
 
 __END__
 
