@@ -14,10 +14,31 @@ typedef struct _Image__Libpuzzle {
     PuzzleCvec    cvec;
 } * Image__Libpuzzle;
 
-//typedef struct _Image__Libpuzzle *Image__Libpuzzle;
+typedef PuzzleCvec * Image__Libpuzzle__Cvec;
+
+typedef PuzzleContext * Image__Libpuzzle__Context;
+
+MODULE = Image::Libpuzzle	PACKAGE = Image::Libpuzzle::Cvec	PREFIX = cvec_
+
+void
+cvec_DESTROY(cvec)
+    Image::Libpuzzle::Cvec cvec 
+
+    CODE:
+      free(cvec);
+
+MODULE = Image::Libpuzzle	PACKAGE = Image::Libpuzzle::Context	PREFIX = context 
+
+void
+context_DESTROY(context)
+    Image::Libpuzzle::Context context 
+
+    CODE:
+      free(context);
 
 MODULE = Image::Libpuzzle	PACKAGE = Image::Libpuzzle	PREFIX = puzzle_
 
+# constructor, returns reference to _Image__Libpuzzle struct 
 Image::Libpuzzle
 puzzle_new(klass, ...)
     char *klass
@@ -36,6 +57,58 @@ puzzle_new(klass, ...)
 
     OUTPUT:
       RETVAL
+
+# get reference to Cvec wrapped as an Image::Libpuzzle::Cvec
+Image::Libpuzzle::Cvec
+puzzle_get_cvec(self) 
+    Image::Libpuzzle self 
+
+    CODE:
+      RETVAL = &self->cvec;
+
+    OUTPUT:
+      RETVAL
+
+# returns stringified version of file (based on the standard practice); assumes cvec has been filled
+SV *
+puzzle_stringify_signature(self)
+    Image::Libpuzzle self 
+
+    CODE:
+      // need to build up string
+
+      // then return as a Perl scalar
+      RETVAL = newSVpv((char *)self->cvec.vec, self->cvec.sizeof_vec);
+
+    OUTPUT:
+      RETVAL
+
+# computes signature from file and returns just signature vector from the Cvec (binary)
+SV *
+puzzle_get_signature_from_file(self, filename)
+    Image::Libpuzzle self 
+    char *filename
+
+    CODE:
+      if (puzzle_fill_cvec_from_file(&self->context, &self->cvec, filename) < 0) {
+          croak("Unable to fill CVEC from file %s: %s", filename, strerror(errno));
+      }
+
+      RETVAL = newSVpv((char *)self->cvec.vec, self->cvec.sizeof_vec);
+
+    OUTPUT:
+      RETVAL
+
+void
+puzzle_DESTROY(self)
+    Image::Libpuzzle self
+
+    CODE:
+      free(self);
+
+#
+# support for direct access to standard library functions
+#
 
 int
 puzzle_puzzle_set_lambdas(self, lambdas)
@@ -125,24 +198,23 @@ puzzle_puzzle_set_autocrop(self, enable)
     OUTPUT:
       RETVAL
 
-SV *
-puzzle_get_signature_from_file(self, filename)
-    Image::Libpuzzle self 
-    char *filename
-
-    CODE:
-      if (puzzle_fill_cvec_from_file(&self->context, &self->cvec, filename) < 0) {
-          croak("Unable to fill CVEC from file %s: %s", filename, strerror(errno));
-      }
-
-      RETVAL = newSVpv((char *)self->cvec.vec, self->cvec.sizeof_vec);
-
-    OUTPUT:
-      RETVAL
-
-void
-puzzle_DESTROY(self)
+double
+puzzle_puzzle_vector_euclidean_length(self)
     Image::Libpuzzle self
 
     CODE:
-      free(self);
+      RETVAL = puzzle_vector_euclidean_length(&self->context, &self->cvec);
+
+    OUTPUT:
+      RETVAL
+    
+double
+puzzle_puzzle_vector_normalized_distance(self, other)
+    Image::Libpuzzle self;
+    Image::Libpuzzle other;
+
+    CODE:
+      RETVAL = puzzle_vector_normalized_distance(&self->context, &self->cvec, &other->cvec, 0);
+
+    OUTPUT:
+      RETVAL
