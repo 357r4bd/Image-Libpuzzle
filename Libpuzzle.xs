@@ -36,11 +36,11 @@ context_DESTROY(context)
     CODE:
       free(context);
 
-MODULE = Image::Libpuzzle	PACKAGE = Image::Libpuzzle	PREFIX = puzzle_
+MODULE = Image::Libpuzzle	PACKAGE = Image::Libpuzzle	PREFIX = libpuzzle_
 
 # constructor, returns reference to _Image__Libpuzzle struct 
 Image::Libpuzzle
-puzzle_new(klass, ...)
+libpuzzle_new(klass, ...)
     char *klass
 
     CODE:
@@ -60,7 +60,7 @@ puzzle_new(klass, ...)
 
 # get reference to Cvec wrapped as an Image::Libpuzzle::Cvec
 Image::Libpuzzle::Cvec
-puzzle_get_cvec(self) 
+libpuzzle_get_cvec(self) 
     Image::Libpuzzle self 
 
     CODE:
@@ -69,23 +69,9 @@ puzzle_get_cvec(self)
     OUTPUT:
       RETVAL
 
-# returns stringified version of file (based on the standard practice); assumes cvec has been filled
+# for convenience, returns signature; can also use Image::Libpuzzle->get_signature() after
 SV *
-puzzle_stringify_signature(self)
-    Image::Libpuzzle self 
-
-    CODE:
-      // need to build up string
-
-      // then return as a Perl scalar
-      RETVAL = newSVpv((char *)self->cvec.vec, self->cvec.sizeof_vec);
-
-    OUTPUT:
-      RETVAL
-
-# computes signature from file and returns just signature vector from the Cvec (binary)
-SV *
-puzzle_get_signature_from_file(self, filename)
+libpuzzle_fill_cvec_from_file(self, filename)
     Image::Libpuzzle self 
     char *filename
 
@@ -99,19 +85,26 @@ puzzle_get_signature_from_file(self, filename)
     OUTPUT:
       RETVAL
 
+# will return a signature, assuming after Image::Libpuzzle->fill_cvec_from_file has been called
+SV *
+libpuzzle_get_signature(self)
+    Image::Libpuzzle self 
+
+    CODE:
+      RETVAL = newSVpv((char *)self->cvec.vec, self->cvec.sizeof_vec);
+
+    OUTPUT:
+      RETVAL
+
 void
-puzzle_DESTROY(self)
+libpuzzle_DESTROY(self)
     Image::Libpuzzle self
 
     CODE:
       free(self);
 
-#
-# support for direct access to standard library functions
-#
-
 int
-puzzle_puzzle_set_lambdas(self, lambdas)
+libpuzzle_set_lambdas(self, lambdas)
     Image::Libpuzzle self;
     unsigned int lambdas
 
@@ -122,7 +115,7 @@ puzzle_puzzle_set_lambdas(self, lambdas)
       RETVAL
 
 int
-puzzle_puzzle_set_p_ratio(self, p_ratio)
+libpuzzle_set_p_ratio(self, p_ratio)
     Image::Libpuzzle self;
     double p_ratio
 
@@ -133,7 +126,7 @@ puzzle_puzzle_set_p_ratio(self, p_ratio)
       RETVAL
 
 int
-puzzle_puzzle_set_max_width(self, width)
+libpuzzle_set_max_width(self, width)
     Image::Libpuzzle self;
     unsigned int width
 
@@ -144,7 +137,7 @@ puzzle_puzzle_set_max_width(self, width)
       RETVAL
 
 int
-puzzle_puzzle_set_max_height(self, height)
+libpuzzle_set_max_height(self, height)
     Image::Libpuzzle self;
     unsigned int height
 
@@ -155,7 +148,7 @@ puzzle_puzzle_set_max_height(self, height)
       RETVAL
 
 int
-puzzle_puzzle_set_noise_cutoff(self, noise_cutoff)
+libpuzzle_set_noise_cutoff(self, noise_cutoff)
     Image::Libpuzzle self;
     double noise_cutoff
 
@@ -166,7 +159,7 @@ puzzle_puzzle_set_noise_cutoff(self, noise_cutoff)
       RETVAL
 
 int
-puzzle_puzzle_set_contrast_barrier_for_cropping(self, barrier)
+libpuzzle_set_contrast_barrier_for_cropping(self, barrier)
     Image::Libpuzzle self;
     double barrier
 
@@ -177,7 +170,7 @@ puzzle_puzzle_set_contrast_barrier_for_cropping(self, barrier)
       RETVAL
 
 int
-puzzle_puzzle_set_max_cropping_ratio(self, ratio)
+libpuzzle_set_max_cropping_ratio(self, ratio)
     Image::Libpuzzle self;
     double ratio
 
@@ -188,7 +181,7 @@ puzzle_puzzle_set_max_cropping_ratio(self, ratio)
       RETVAL
 
 int
-puzzle_puzzle_set_autocrop(self, enable)
+libpuzzle_set_autocrop(self, enable)
     Image::Libpuzzle self;
     int enable
 
@@ -199,7 +192,7 @@ puzzle_puzzle_set_autocrop(self, enable)
       RETVAL
 
 double
-puzzle_puzzle_vector_euclidean_length(self)
+libpuzzle_vector_euclidean_length(self)
     Image::Libpuzzle self
 
     CODE:
@@ -209,12 +202,113 @@ puzzle_puzzle_vector_euclidean_length(self)
       RETVAL
     
 double
-puzzle_puzzle_vector_normalized_distance(self, other)
+libpuzzle_vector_normalized_distance(self, other)
     Image::Libpuzzle self;
     Image::Libpuzzle other;
 
     CODE:
       RETVAL = puzzle_vector_normalized_distance(&self->context, &self->cvec, &other->cvec, 0);
+
+    OUTPUT:
+      RETVAL
+
+# use PUZZLE_CVEC_SIMILARITY_THRESHOLD
+int
+libpuzzle_is_similar(self, other)
+    Image::Libpuzzle self;
+    Image::Libpuzzle other;
+    CODE:
+      RETVAL = 0;
+      double distance = puzzle_vector_normalized_distance(&self->context, &self->cvec, &other->cvec, 0);
+      if ( distance <  PUZZLE_CVEC_SIMILARITY_THRESHOLD ) {
+        RETVAL = 1;
+      }
+
+    OUTPUT:
+      RETVAL
+
+# use PUZZLE_CVEC_SIMILARITY_LOW_THRESHOLD
+int
+libpuzzle_is_very_similar(self, other)
+    Image::Libpuzzle self;
+    Image::Libpuzzle other;
+    CODE:
+      RETVAL = 0;
+      double distance = puzzle_vector_normalized_distance(&self->context, &self->cvec, &other->cvec, 0);
+      if ( distance <  PUZZLE_CVEC_SIMILARITY_LOW_THRESHOLD ) {
+        RETVAL = 1;
+      }
+
+    OUTPUT:
+      RETVAL
+
+# use PUZZLE_CVEC_SIMILARITY_LOWER_THRESHOLD
+int
+libpuzzle_is_most_similar(self, other)
+    Image::Libpuzzle self;
+    Image::Libpuzzle other;
+    CODE:
+      RETVAL = 0;
+      double distance = puzzle_vector_normalized_distance(&self->context, &self->cvec, &other->cvec, 0);
+      if ( distance <  PUZZLE_CVEC_SIMILARITY_LOWER_THRESHOLD ) {
+        RETVAL = 1;
+      }
+
+    OUTPUT:
+      RETVAL
+
+# access to libary constants
+
+int
+libpuzzle_PUZZLE_VERSION_MAJOR(self)
+
+    CODE:
+      RETVAL = PUZZLE_VERSION_MAJOR;
+
+    OUTPUT:
+      RETVAL
+
+int
+libpuzzle_PUZZLE_VERSION_MINOR(self)
+
+    CODE:
+      RETVAL = PUZZLE_VERSION_MINOR;
+
+    OUTPUT:
+      RETVAL
+
+double
+libpuzzle_PUZZLE_CVEC_SIMILARITY_THRESHOLD(self)
+
+    CODE:
+      RETVAL = PUZZLE_CVEC_SIMILARITY_THRESHOLD;
+
+    OUTPUT:
+      RETVAL
+
+double
+libpuzzle_PUZZLE_CVEC_SIMILARITY_HIGH_THRESHOLD(self)
+
+    CODE:
+      RETVAL = PUZZLE_CVEC_SIMILARITY_HIGH_THRESHOLD;
+
+    OUTPUT:
+      RETVAL
+
+double
+libpuzzle_PUZZLE_CVEC_SIMILARITY_LOW_THRESHOLD(self)
+
+    CODE:
+      RETVAL = PUZZLE_CVEC_SIMILARITY_LOW_THRESHOLD;
+
+    OUTPUT:
+      RETVAL
+
+double
+libpuzzle_PUZZLE_CVEC_SIMILARITY_LOWER_THRESHOLD(self)
+
+    CODE:
+      RETVAL = PUZZLE_CVEC_SIMILARITY_LOWER_THRESHOLD;
 
     OUTPUT:
       RETVAL
