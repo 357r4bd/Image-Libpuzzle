@@ -1,3 +1,5 @@
+use strict;
+use warnings;
 
 use ExtUtils::testlib;
 use lib './lib';
@@ -26,21 +28,22 @@ foreach my $i ( 11, 9, 7, 5 ) {
     $p2->set_lambdas($i);
     $p2->set_p_ratio($j);
     $sig2 = $p2->fill_cvec_from_file($pic2);
-    print unpack("C*", $sig1), "\n";
-    print unpack("C*", $sig2);
+print Data::Dumper::Dumper($p1->signature_as_ngrams($p1->signature_as_string()));
+    print $p1->signature_as_string(), "\n";
+    print $p2->signature_as_string();
     # my $d = puzzle_vector_euclidean_distance($cvec1, $cvec2);
     printf("\nEuclidean length: %f",$p1->vector_euclidean_length);
     # my $d = puzzle_vector_normalized_distance($cvec1, $cvec2);
     printf("\nDiff with \$p2: %f", $p1->vector_normalized_distance($p2));
-    printf("\nIs %s",($p1->is_most_similar($p2)) ? q{most similar} : q{not most similar});
+    printf("\nCompare 1: Is %s",($p1->is_most_similar($p2)) ? q{most similar} : q{not most similar});
+    print "\n";
+    printf("\nCompare 2: Is %s",( $p1->vector_normalized_distance($p2) < $Image::Libpuzzle::PUZZLE_CVEC_SIMILARITY_LOWER_THRESHOLD ) ? q{most similar} : q{not most similar});
+    print "\n";
     print "\n\n";
   }
 }
 
 my $cvec = $p1->get_cvec; # reference to Image::Libpuzzle::Cvec
-
-print "\n";
-print $p1->PUZZLE_CVEC_SIMILARITY_THRESHOLD();
 
 #my $cvec1 = $p1->puzzle_fill_cvec_from_file($pic1);
 #my $cvec2 = $p2->puzzle_fill_cvec_from_file($pic2);
