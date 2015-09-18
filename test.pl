@@ -28,9 +28,11 @@ foreach my $i ( 11, 9, 7, 5 ) {
     $p2->set_lambdas($i);
     $p2->set_p_ratio($j);
     $sig2 = $p2->fill_cvec_from_file($pic2);
-print Data::Dumper::Dumper($p1->signature_as_ngrams($p1->signature_as_string()));
-    print $p1->signature_as_string(), "\n";
-    print $p2->signature_as_string();
+    my $string1 = $p1->signature_as_string();
+    print $string1;
+    my $string2 = $p2->signature_as_string();
+    print $string2;
+    print Data::Dumper::Dumper($p1->signature_as_ngrams);
     # my $d = puzzle_vector_euclidean_distance($cvec1, $cvec2);
     printf("\nEuclidean length: %f",$p1->vector_euclidean_length);
     # my $d = puzzle_vector_normalized_distance($cvec1, $cvec2);
