@@ -28,11 +28,14 @@ foreach my $i ( 11, 9, 7, 5 ) {
     $p2->set_lambdas($i);
     $p2->set_p_ratio($j);
     $sig2 = $p2->fill_cvec_from_file($pic2);
-    my $string1 = $p1->signature_as_string();
-    print $string1;
-    my $string2 = $p2->signature_as_string();
-    print $string2;
-    print Data::Dumper::Dumper($p1->signature_as_ngrams);
+    my $string1 = $p1->signature_as_string;
+    print qq{$string1\n};
+    my $string2 = $p2->signature_as_string;
+    print qq{$string2\n};
+    my $words1_ref = $p1->signature_as_ngrams; # defaults to $ngram size of $Image::Libpuzzle::DEFAULT_NGRAM_SIZE
+    print join ' ', @$words1_ref;
+    my $words2_ref = $p2->signature_as_ngrams(6); # example overriding $Image::Libpuzzle::DEFAULT_NGRAM_SIZE 
+    print join ' ', @$words2_ref;
     # my $d = puzzle_vector_euclidean_distance($cvec1, $cvec2);
     printf("\nEuclidean length: %f",$p1->vector_euclidean_length);
     # my $d = puzzle_vector_normalized_distance($cvec1, $cvec2);
