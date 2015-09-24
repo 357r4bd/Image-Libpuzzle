@@ -2,16 +2,13 @@ use strict;
 use warnings;
 
 use ExtUtils::testlib;
-use lib './lib';
+use lib '../lib';
 use Image::Libpuzzle; 
-
-use Devel::Peek;
-use Data::Dumper ();
 
 # initial synopsis
 
-my $pic1 = q{pics/luxmarket_tshirt01.jpg};
-my $pic2 = q{pics/luxmarket_tshirt01_sal.jpg};
+my $pic1 = q{t/pics/luxmarket_tshirt01.jpg};
+my $pic2 = q{t/pics/luxmarket_tshirt01_sal.jpg};
 
 my $p1 = Image::Libpuzzle->new; #( lambdas => 11, p_ratio => 2.0 );  # TODO, process these params
 my $p2 = Image::Libpuzzle->new; #( lambdas => 11, p_ratio => 2.0 );  # TODO, process these params

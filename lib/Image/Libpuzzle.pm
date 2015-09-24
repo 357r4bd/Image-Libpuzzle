@@ -61,6 +61,8 @@ Image::Libpuzzle - Perl interface to libpuzzle.
  
  my $sig1 = $p1->fill_cvec_from_file($pic1);
  my $sig2 = $p2->fill_cvec_from_file($pic2);
+
+ # contrived example to show the setting of some parameters that affect the signature
  
  foreach my $i ( 11, 9, 7, 5 ) {
    foreach my $j ( 2.0, 1.0, 0.5 ) {

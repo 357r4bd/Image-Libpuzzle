@@ -9,7 +9,7 @@ WriteMakefile(
     ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM  => 'lib/Image/Libpuzzle.pm', # retrieve abstract from module
        AUTHOR         => 'B. Estrade <estrabd@gmail.com>') : ()),
-    LIBS              => ['-lpuzzle -lgd'], # e.g., '-lm'
+    LIBS              => ['-lpuzzle'], # e.g., '-lm'
     DEFINE            => '', # e.g., '-DHAVE_SOMETHING'
     INC               => '', # e.g., '-I. -I/usr/include/other'
     # Un-comment this if you add C files to link with later:
