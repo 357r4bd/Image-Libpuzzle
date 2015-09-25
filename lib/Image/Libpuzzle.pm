@@ -5,7 +5,7 @@ use warnings;
 
 our $VERSION = '0.01';
 require XSLoader;
-XSLoader::load('Image::Libpuzzle', $VERSION);
+XSLoader::load( 'Image::Libpuzzle', $VERSION );
 
 our $DEFAULT_NGRAM_SIZE = 4;
 
@@ -18,26 +18,26 @@ our $PUZZLE_CVEC_SIMILARITY_LOW_THRESHOLD = Image::Libpuzzle->PUZZLE_CVEC_SIMILA
 our $PUZZLE_CVEC_SIMILARITY_LOWER_THRESHOLD = Image::Libpuzzle->PUZZLE_CVEC_SIMILARITY_LOWER_THRESHOLD;
 
 # uses unpack and $self accessor to get signature directly from the internal cvec
-sub signature_as_string { 
-  my $self = shift;
-  my @sig = unpack("C*",$self->get_signature());
-  my $sig = q{};
-  foreach my $i (@sig) {
-    $sig .= sprintf("%02d",$i); 
-  }
-  return $sig;
+sub signature_as_string {
+    my $self = shift;
+    my @sig  = unpack( "C*", $self->get_signature() );
+    my $sig  = q{};
+    foreach my $i (@sig) {
+        $sig .= sprintf( "%02d", $i );
+    }
+    return $sig;
 }
 
 # returns an ARRAY ref of all ngrams, of L-R sliding window of size $ngram_size
 sub signature_as_ngrams {
-  my $self = shift;
-  my $ngram_size = shift || $DEFAULT_NGRAM_SIZE;
-  my $sig = $self->signature_as_string; 
-  my @ngrams  = ();
-  for ( my $i = 0 ; $i <= length($sig) - $ngram_size ; $i++ ) {
-      push @ngrams, substr( $sig, $i, $ngram_size );
-  }
-  return \@ngrams;
+    my $self       = shift;
+    my $ngram_size = shift || $DEFAULT_NGRAM_SIZE;
+    my $sig        = $self->signature_as_string;
+    my @ngrams     = ();
+    for ( my $i = 0 ; $i <= length($sig) - $ngram_size ; $i++ ) {
+        push @ngrams, substr( $sig, $i, $ngram_size );
+    }
+    return \@ngrams;
 }
 
 1;
@@ -101,7 +101,8 @@ by Libpuzzle, L<http://www.pureftpd.org/project/libpuzzle>.
 It also includes some pure Perl helper methods users of Libpuzzle might
 find helpful when creating applications based on it.
 
-Mention other useful documentation such as the documentation of
+This module is in its very early form. It may change without notice. If a feature is missing, please
+request it at L<https://github.com/estrabd/p5-puzzle-xs/issues>.
 
 =head1 NOTES ON USING LIBPUZZLE
 
@@ -110,11 +111,11 @@ the underlying Libpuzzle library.
 
 =head2 Comparing Images
 
-To be written.
+...soon
 
 =head2 Working With Signatures
 
-To be written.
+...soon
 
 =head2 Comparing Millions of Images
 
@@ -133,7 +134,11 @@ may be added in the future if there is demand.
 
 =head1 XS METHODS AND SUBROUTINES
 
+...soon
+
 =head1 Pure Perl METHODS AND SUBROUTINES
+
+...soon
 
 =head2 C<signature_as_string>
 
@@ -154,15 +159,27 @@ L<http://stackoverflow.com/questions/9703762/libpuzzle-indexing-millions-of-pict
 
 =head1 ENVIRONMENT
 
-=head2 PACKAGE VARIABLES
+This module assumes that libpuzzle is installed and puzzle.h is able to be found in a default LIBRARY path.
+
+Libpuzzle is available via most Ports/package repos. It also builds easily, though it requires libgd.so.
+
+Also see, L<http://www.pureftpd.org/project/libpuzzle>.
+
+=head1 BUGS
+
+Please report them via L<https://github.com/estrabd/p5-puzzle-xs/issues>.
 
 =head1 AUTHOR
 
 Brett Estrade <estrabd@gmail.com>
 
+=head2 THANKS
+
+My good and ridiculously smart friend, Xantronix, help me patiently while working through n00b XS bits while writing this module.
+
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2015 by Brett Estrade, Xantronix
+Copyright (C) 2015 by Brett Estrade
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.14.4 or,
