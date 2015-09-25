@@ -4,5 +4,5 @@ MANIFEST
 ppport.h
 Libpuzzle.xs
 README
-t/Puzzle.t
+t/01-common.t
 lib/Image/Libpuzzle.pm
