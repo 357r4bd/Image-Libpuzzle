@@ -12,15 +12,13 @@ To install this module type the following:
 
 DEPENDENCIES
 
-This module requires these other modules and libraries:
-
-Libpuzzle - L<http://www.pureftpd.org/project/libpuzzle>
+This module requires Libpuzzle - L<http://www.pureftpd.org/project/libpuzzle>
 
 COPYRIGHT AND LICENCE
 
 Put the correct copyright and licence information here.
 
-Copyright (C) 2015 by User &
+Copyright (C) 2015 by B. Estrade <estrabd@gmail.com>
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.14.4 or,
