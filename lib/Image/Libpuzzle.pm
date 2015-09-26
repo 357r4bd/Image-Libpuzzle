@@ -5,39 +5,39 @@ use warnings;
 
 our $VERSION = '0.01';
 require XSLoader;
-XSLoader::load( 'Image::Libpuzzle', $VERSION );
+XSLoader::load('Image::Libpuzzle', $VERSION);
 
 our $DEFAULT_NGRAM_SIZE = 4;
 
 # Convenient package variables for the defines in puzzle.h; changing them does nothing.
-our $PUZZLE_VERSION_MAJOR = Image::Libpuzzle->PUZZLE_VERSION_MAJOR;
-our $PUZZLE_VERSION_MINOR = Image::Libpuzzle->PUZZLE_VERSION_MINOR;
-our $PUZZLE_CVEC_SIMILARITY_THRESHOLD = Image::Libpuzzle->PUZZLE_CVEC_SIMILARITY_THRESHOLD;
-our $PUZZLE_CVEC_SIMILARITY_HIGH_THRESHOLD = Image::Libpuzzle->PUZZLE_CVEC_SIMILARITY_HIGH_THRESHOLD;
-our $PUZZLE_CVEC_SIMILARITY_LOW_THRESHOLD = Image::Libpuzzle->PUZZLE_CVEC_SIMILARITY_LOW_THRESHOLD;
+our $PUZZLE_VERSION_MAJOR                   = Image::Libpuzzle->PUZZLE_VERSION_MAJOR;
+our $PUZZLE_VERSION_MINOR                   = Image::Libpuzzle->PUZZLE_VERSION_MINOR;
+our $PUZZLE_CVEC_SIMILARITY_THRESHOLD       = Image::Libpuzzle->PUZZLE_CVEC_SIMILARITY_THRESHOLD;
+our $PUZZLE_CVEC_SIMILARITY_HIGH_THRESHOLD  = Image::Libpuzzle->PUZZLE_CVEC_SIMILARITY_HIGH_THRESHOLD;
+our $PUZZLE_CVEC_SIMILARITY_LOW_THRESHOLD   = Image::Libpuzzle->PUZZLE_CVEC_SIMILARITY_LOW_THRESHOLD;
 our $PUZZLE_CVEC_SIMILARITY_LOWER_THRESHOLD = Image::Libpuzzle->PUZZLE_CVEC_SIMILARITY_LOWER_THRESHOLD;
 
 # uses unpack and $self accessor to get signature directly from the internal cvec
 sub signature_as_string {
-    my $self = shift;
-    my @sig  = unpack( "C*", $self->get_signature() );
-    my $sig  = q{};
-    foreach my $i (@sig) {
-        $sig .= sprintf( "%02d", $i );
-    }
-    return $sig;
+  my $self = shift;
+  my @sig  = unpack("C*", $self->get_signature());
+  my $sig  = q{};
+  foreach my $i (@sig) {
+    $sig .= sprintf("%02d", $i);
+  }
+  return $sig;
 }
 
 # returns an ARRAY ref of all ngrams, of L-R sliding window of size $ngram_size
 sub signature_as_ngrams {
-    my $self       = shift;
-    my $ngram_size = shift || $DEFAULT_NGRAM_SIZE;
-    my $sig        = $self->signature_as_string;
-    my @ngrams     = ();
-    for ( my $i = 0 ; $i <= length($sig) - $ngram_size ; $i++ ) {
-        push @ngrams, substr( $sig, $i, $ngram_size );
-    }
-    return \@ngrams;
+  my $self       = shift;
+  my $ngram_size = shift || $DEFAULT_NGRAM_SIZE;
+  my $sig        = $self->signature_as_string;
+  my @ngrams     = ();
+  for (my $i = 0; $i <= length($sig) - $ngram_size; $i++) {
+    push @ngrams, substr($sig, $i, $ngram_size);
+  }
+  return \@ngrams;
 }
 
 1;
@@ -67,26 +67,48 @@ Image::Libpuzzle - Perl interface to libpuzzle.
  foreach my $i ( 11, 9, 7, 5 ) {
    foreach my $j ( 2.0, 1.0, 0.5 ) {
      print "Lambda: $i, p ratio: $j\n";
+
+     # set some params for sig1
      $p1->set_lambdas($i);
      $p1->set_p_ratio($j);
+
+     # get signature for pic1
      $sig1 = $p1->fill_cvec_from_file($pic1);
+
+     # set same params for sig2
      $p2->set_lambdas($i);
      $p2->set_p_ratio($j);
+
+     # get signature for pic2
      $sig2 = $p2->fill_cvec_from_file($pic2);
+
+     # stringify sig1
      my $string1 = $p1->signature_as_string;
      print qq{$string1\n};
+
+     # stringify sig2
      my $string2 = $p2->signature_as_string;
      print qq{$string2\n};
+
+     # generate a "document" of ngrams from sig1
      my $words1_ref = $p1->signature_as_ngrams; # defaults to $ngram size of $Image::Libpuzzle::DEFAULT_NGRAM_SIZE
      print join ' ', @$words1_ref;
+
+     # generate a "document" of ngrams from sig2
      my $words2_ref = $p2->signature_as_ngrams(6); # example overriding $Image::Libpuzzle::DEFAULT_NGRAM_SIZE 
      print join ' ', @$words2_ref;
-     # my $d = puzzle_vector_euclidean_distance($cvec1, $cvec2);
+
+     # print Euclidean length of sig1
      printf("\nEuclidean length: %f",$p1->vector_euclidean_length);
-     # my $d = puzzle_vector_normalized_distance($cvec1, $cvec2);
+
+     # print Euclidean length of sig2
      printf("\nDiff with \$p2: %f", $p1->vector_normalized_distance($p2));
+
+     # compare images with a helper method
      printf("\nCompare 1: Is %s",($p1->is_most_similar($p2)) ? q{most similar} : q{not most similar});
      print "\n";
+
+     # compare images directly
      printf("\nCompare 2: Is %s",( $p1->vector_normalized_distance($p2) < $Image::Libpuzzle::PUZZLE_CVEC_SIMILARITY_LOWER_THRESHOLD ) ? q{most similar} : q{not most similar});
      print "\n";
      print "\n\n";
@@ -111,11 +133,17 @@ the underlying Libpuzzle library.
 
 =head2 Comparing Images
 
-...soon
+Libpuzzle presents a robust, fuzzy way to compare the similarity of images. Read more about the technique in the
+paper that describes it, 
+
+L<http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.104.2585&rep=rep1&type=pdf>
 
 =head2 Working With Signatures
 
-...soon
+Signatures are typically not printable date, so one may either use the native Libpuzzle methods to work with them,
+such as C<vector_euclidean_length> and C<vector_normalized_distance>.
+
+C<Image::Libpuzzle> provides two methods for generating signatures in a printable form that may be used to deal with signatures in a more printable way, C<signature_as_string> and C<signature_as_ngrans>. See below for more details.
 
 =head2 Comparing Millions of Images
 
@@ -134,11 +162,97 @@ may be added in the future if there is demand.
 
 =head1 XS METHODS AND SUBROUTINES
 
-...soon
+=head2 new
+
+Constructor, returns a C<Image::Libpuzzle> reference.
+
+=head2 get_cvec
+
+Returns a Image::Libpuzzle::Cvec reference, currently one can't do much with this.
+
+=head2 fill_cvec_from_file(q{./path/to/image})
+
+Generates the signature for the given file.
+
+=head2 get_signature
+
+Returns the signature in an unprintable form.
+
+=head2 set_lambdas
+
+Wrapper around Libpuzzle's function. Sets the number of samples taken for each image.
+
+=head2 set_p_ratio
+
+Wrapper around Libpuzzle's function. Sets the size of the samples. Used in conjunction with C<set_lambdas> to get more or less precise signatures.
+
+=head2 set_max_width
+
+Wrapper around Libpuzzle's function. 
+
+=head2 set_max_height
+
+Wrapper around Libpuzzle's function.
+
+=head2 set_noise_cutoff
+
+Wrapper around Libpuzzle's function. 
+
+=head2 set_contrast_barrier_for_cropping
+
+Wrapper around Libpuzzle's function. 
+
+=head2 set_max_cropping_ratio
+
+Wrapper around Libpuzzle's function. 
+
+=head2 set_autocrop
+
+Wrapper around Libpuzzle's function. 
+
+=head2 vector_euclidean_length
+
+Wrapper around Libpuzzle's function. Returns a length value for the signature, used when computing distances between two images in C<vector_normalized_distance>.
+
+=head2 vector_normalized_distance
+
+=head2 is_similar
+
+Convenience methods, compares images using C<PUZZLE_CVEC_SIMILARITY_THRESHOLD>
+
+=head2 is_very_similar
+
+Convenience methods, compares images using C<PUZZLE_CVEC_SIMILARITY_LOW_THRESHOLD>
+
+=head2 is_most_similar
+
+Convenience methods, compares images using C<PUZZLE_CVEC_SIMILARITY_LOWER_THRESHOLD>
+
+=head2 PUZZLE_VERSION_MAJOR
+
+Returns constant defining major version.
+
+=head2 PUZZLE_VERSION_MINOR
+
+Returns constant defining minor version.
+
+=head2 PUZZLE_CVEC_SIMILARITY_THRESHOLD
+
+Returns constant defining the average normalized distance cutoff for considering two images as similar. Used by C<is_similar>.
+
+=head2 PUZZLE_CVEC_SIMILARITY_HIGH_THRESHOLD
+
+Returns constant defining the upper limit normalized distance cutoff for considering two images as similar. Must be used directly.
+
+=head2 PUZZLE_CVEC_SIMILARITY_LOW_THRESHOLD
+
+Returns constant defining more precise normalized distance cutoff for considering two images as similar. Used by C<is_very_similar>.
+
+=head2 PUZZLE_CVEC_SIMILARITY_LOWER_THRESHOLD
+
+Returns constant defining the most precise normalized distance cutoff for considering two images as similar. Used by C<is_most_similar>.
 
 =head1 Pure Perl METHODS AND SUBROUTINES
-
-...soon
 
 =head2 C<signature_as_string>
 
@@ -175,7 +289,7 @@ Brett Estrade <estrabd@gmail.com>
 
 =head2 THANKS
 
-My good and ridiculously smart friend, Xantronix, help me patiently while working through n00b XS bits while writing this module.
+My good and ridiculously smart friend, Xan Tronix (~xan), helped me patiently as I was working through n00b XS bits during the writing of this module.
 
 =head1 COPYRIGHT AND LICENSE
 
