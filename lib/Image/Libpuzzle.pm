@@ -3,11 +3,11 @@ package Image::Libpuzzle;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = '0.04';
 require XSLoader;
 XSLoader::load('Image::Libpuzzle', $VERSION);
 
-our $DEFAULT_NGRAM_SIZE = 4;
+our $DEFAULT_NGRAM_SIZE = 10;
 
 # Convenient package variables for the defines in puzzle.h; changing them does nothing.
 our $PUZZLE_VERSION_MAJOR                   = Image::Libpuzzle->PUZZLE_VERSION_MAJOR;
@@ -143,7 +143,8 @@ L<http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.104.2585&rep=rep1&typ
 Signatures are typically not printable date, so one may either use the native Libpuzzle methods to work with them,
 such as C<vector_euclidean_length> and C<vector_normalized_distance>.
 
-C<Image::Libpuzzle> provides two methods for generating signatures in a printable form that may be used to deal with signatures in a more printable way, C<signature_as_string> and C<signature_as_ngrans>. See below for more details.
+C<Image::Libpuzzle> provides two methods for generating signatures in a printable form that may be used to deal
+with signatures in a more printable way, C<signature_as_string> and C<signature_as_ngrans>. See below for more details.
 
 =head2 Comparing Millions of Images
 
@@ -178,37 +179,87 @@ Generates the signature for the given file.
 
 Returns the signature in an unprintable form.
 
-=head2 set_lambdas
+=head2 set_lambdas($integer)
 
 Wrapper around Libpuzzle's function. Sets the number of samples taken for each image.
 
-=head2 set_p_ratio
+The default is set in puzzle.h is 9; i.e., by default, pictures are divided in 9 x 9 blocks.
+
+C<puzzle_set(3)> says,
+
+For large databases, for complex images, for images with a lot of text or for sets of near-similar images, it might be better to raise that value to 11 or even 13
+
+However, raising that value obviously means that vectors will require more storage space.
+
+The lambdas value should remain the same in order to get comparable vectors. So if you pick 11 (for instance), you should always use that value for all pictures you will compute a digest for. C<puzzle_set_p_ratio()>
+
+The average intensity of each block is based upon a small centered zone.
+
+The "p ratio" determines the size of that zone. The default is 2.0, and that ratio mimics the behavior that is described in the reference algorithm.
+
+For very specific cases (complex images) or if you get too many false positives, as an alternative to increasing lambdas, you can try to lower that value, for instance to 1.5.
+
+The lowest acceptable value is 1.0.
+
+=head2 set_p_ratio($double)
 
 Wrapper around Libpuzzle's function. Sets the size of the samples. Used in conjunction with C<set_lambdas> to get more or less precise signatures.
+
+C<puzzle_set(3)> says,
+
+The "p ratio" determines the size of that zone. The default is 2.0, and that ratio mimics the behavior that is described in the reference algorithm.
 
 =head2 set_max_width
 
 Wrapper around Libpuzzle's function. 
 
+C<puzzle_set(3)> says,
+
+In order to avoid CPU starvation, pictures won't be processed if their width or height is larger than 3000 pixels.
+
 =head2 set_max_height
 
 Wrapper around Libpuzzle's function.
+
+See L<set_max_width>.
 
 =head2 set_noise_cutoff
 
 Wrapper around Libpuzzle's function. 
 
+C<puzzle_set(3)> says,
+
+The noise cutoff defaults to 2. If you raise that value, more zones with little difference of intensity will be considered as similar.
+
+Unless you have very specialized sets of pictures, you probably don't want to change this.
+
+=head2 set_autocrop
+
+Wrapper around Libpuzzle's function. 
+
+C<puzzle_set(3)> says,
+
+By default, featureless borders of the original image are ignored. The size of each border depends on the sum of absolute values of differences between adjacent pixels, relative to the total sum.
+
+That feature can be disabled with C<puzzle_set_autocrop(0)> Any other value will enable it.
+
+C<puzzle_set_contrast_barrier_for_cropping()> changes the tolerance. The default value is 5. Less shaves less, more shaves more.
+
+C<puzzle_set_max_cropping_ratio()> This is a safe-guard against unwanted excessive auto-cropping.
+
+The default (0.25) means that no more than 25% of the total width (or height) will ever be shaved.
+
 =head2 set_contrast_barrier_for_cropping
 
 Wrapper around Libpuzzle's function. 
+
+See L<set_autocrop> for details.
 
 =head2 set_max_cropping_ratio
 
 Wrapper around Libpuzzle's function. 
 
-=head2 set_autocrop
-
-Wrapper around Libpuzzle's function. 
+See L<set_autocrop> for details.
 
 =head2 vector_euclidean_length
 
@@ -263,7 +314,7 @@ into a string, they are padded. For example, 1 turns into 001; 25 turns into 025
 =head2 C<signature_as_ngrams>
 
 Takes the output of C<signature_as_string> and returns an ARRAY ref of C<words> of size
-C<$ngram_size>. The default, C<$DEFAULT_NGRAM_SIZE> is set to 4. An optional argument
+C<$ngram_size>. The default, C<$DEFAULT_NGRAM_SIZE> is set to 10. An optional argument
 may be passed to override this default.
 
 The paragraph of ngrams is constructed in a method consistent with the one described
@@ -275,11 +326,11 @@ L<http://stackoverflow.com/questions/9703762/libpuzzle-indexing-millions-of-pict
 
 This module assumes that libpuzzle is installed and puzzle.h is able to be found in a default LIBRARY path.
 
-Libpuzzle is available via most Ports/package repos. It also builds easily, though it requires libgd.so.
+Libpuzzle is available via most Ports/package repos. It also builds easily, though it requires C<libgd.so>.
 
 Also see, L<http://www.pureftpd.org/project/libpuzzle>.
 
-=head1 BUGS
+=head1 BUGS AND LIMITATIONS
 
 Please report them via L<https://github.com/estrabd/p5-puzzle-xs/issues>.
 
@@ -289,7 +340,8 @@ Brett Estrade <estrabd@gmail.com>
 
 =head2 THANKS
 
-My good and ridiculously smart friend, Xan Tronix (~xan), helped me patiently as I was working through n00b XS bits during the writing of this module.
+My good and ridiculously smart friend, Xan Tronix (~xan), helped me patiently as I was working through n00b
+XS bits during the writing of this module.
 
 =head1 COPYRIGHT AND LICENSE
 
