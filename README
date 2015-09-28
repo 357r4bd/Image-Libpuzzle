@@ -10,6 +10,8 @@ To install this module type the following:
    make test
    make install
 
+The module also lives on CPAN, http://search.cpan.org/~estrabd/Image-Libpuzzle/
+
 DEPENDENCIES
 
 This module requires Libpuzzle - L<http://www.pureftpd.org/project/libpuzzle>
