@@ -117,49 +117,53 @@ Image::Libpuzzle - Perl interface to libpuzzle.
 
 =head1 DESCRIPTION
 
-This XS module provdes access to the most common functionality provided
-by Libpuzzle, L<http://www.pureftpd.org/project/libpuzzle>.
+This XS module provdes access to the most common functionality provided by
+Libpuzzle, L<http://www.pureftpd.org/project/libpuzzle>.
 
-It also includes some pure Perl helper methods users of Libpuzzle might
-find helpful when creating applications based on it.
+It also includes some pure Perl helper methods users of Libpuzzle might find
+helpful when creating applications based on it.
 
-This module is in its very early form. It may change without notice. If a feature is missing, please
-request it at L<https://github.com/estrabd/p5-puzzle-xs/issues>.
+This module is in its very early form. It may change without
+notice. If a feature is missing, please request it at
+L<https://github.com/estrabd/p5-puzzle-xs/issues>.
 
 =head1 NOTES ON USING LIBPUZZLE
 
-Below are some brief notes on how to use this module in order to get the most out of
-the underlying Libpuzzle library.
+Below are some brief notes on how to use this module in order to get the most
+out of the underlying Libpuzzle library.
 
 =head2 Comparing Images
 
-Libpuzzle presents a robust, fuzzy way to compare the similarity of images. Read more about the technique in the
-paper that describes it, 
+Libpuzzle presents a robust, fuzzy way to compare the similarity of images. Read
+more about the technique in the paper that describes it,
 
 L<http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.104.2585&rep=rep1&type=pdf>
 
 =head2 Working With Signatures
 
-Signatures are typically not printable date, so one may either use the native Libpuzzle methods to work with them,
-such as C<vector_euclidean_length> and C<vector_normalized_distance>.
+Signatures are typically not printable date, so one may either use the native
+Libpuzzle methods to work with them, such as C<vector_euclidean_length> and
+C<vector_normalized_distance>.
 
-C<Image::Libpuzzle> provides two methods for generating signatures in a printable form that may be used to deal
-with signatures in a more printable way, C<signature_as_string> and C<signature_as_ngrans>. See below for more details.
+C<Image::Libpuzzle> provides two methods for generating signatures in a
+printable form that may be used to deal with signatures in a more printable way,
+C<signature_as_string> and C<signature_as_ngrans>. See below for more details.
 
 =head2 Comparing Millions of Images
 
-This Stack Overflow URL seems to be the best resources for addressing this question:
+This Stack Overflow URL seems to be the best resources for addressing this
+question:
 
 L<http://stackoverflow.com/questions/9703762/libpuzzle-indexing-millions-of-pictures>
 
-The C<Image::Libpuzzle::signature_as_ngrams> methods may be used to generate ngrams
-(words of size N) for use with the oft suggested approach to searching for similar
-images in a database of signatures.
+The C<Image::Libpuzzle::signature_as_ngrams> methods may be used to generate
+ngrams (words of size N) for use with the oft suggested approach to searching
+for similar images in a database of signatures.
 
 =head2 Working With Compressed Signatures
 
-Working with compressed signatures is not currently supported in this module, but
-may be added in the future if there is demand.
+Working with compressed signatures is not currently supported in this module,
+but may be added in the future if there is demand.
 
 =head1 XS METHODS AND SUBROUTINES
 
@@ -167,168 +171,226 @@ may be added in the future if there is demand.
 
 Constructor, returns a C<Image::Libpuzzle> reference.
 
-=head2 get_cvec
+=head2 C<get_cvec>
 
-Returns a Image::Libpuzzle::Cvec reference, currently one can't do much with this.
+Returns a Image::Libpuzzle::Cvec reference, currently one can't do much with
+this.
 
-=head2 fill_cvec_from_file(q{./path/to/image})
+=head2 C<fill_cvec_from_file(q{./path/to/image})>
 
 Generates the signature for the given file.
 
-=head2 get_signature
+=head2 C<get_signature>
 
 Returns the signature in an unprintable form.
 
-=head2 set_lambdas($integer)
+=head2 C<set_lambdas($integer)>
 
-Wrapper around Libpuzzle's function. Sets the number of samples taken for each image.
+Wrapper around Libpuzzle's function. Sets the number of samples taken for each
+image.
 
-The default is set in puzzle.h is 9; i.e., by default, pictures are divided in 9 x 9 blocks.
+The default is set in puzzle.h is 9; i.e., by default, pictures are divided in 9
+x 9 blocks.
 
 C<puzzle_set(3)> says,
 
-For large databases, for complex images, for images with a lot of text or for sets of near-similar images, it might be better to raise that value to 11 or even 13
+For large databases, for complex images, for images with a lot of text or for
+sets of near-similar images, it might be better to raise that value to 11 or
+even 13
 
-However, raising that value obviously means that vectors will require more storage space.
+However, raising that value obviously means that vectors will require more
+storage space.
 
-The lambdas value should remain the same in order to get comparable vectors. So if you pick 11 (for instance), you should always use that value for all pictures you will compute a digest for. C<puzzle_set_p_ratio()>
+The lambdas value should remain the same in order to get comparable vectors. So
+if you pick 11 (for instance), you should always use that value for all pictures
+you will compute a digest for. C<puzzle_set_p_ratio()>
 
 The average intensity of each block is based upon a small centered zone.
 
-The "p ratio" determines the size of that zone. The default is 2.0, and that ratio mimics the behavior that is described in the reference algorithm.
+The "p ratio" determines the size of that zone. The default is 2.0, and that
+ratio mimics the behavior that is described in the reference algorithm.
 
-For very specific cases (complex images) or if you get too many false positives, as an alternative to increasing lambdas, you can try to lower that value, for instance to 1.5.
+For very specific cases (complex images) or if you get too many false positives,
+as an alternative to increasing lambdas, you can try to lower that value, for
+instance to 1.5.
 
 The lowest acceptable value is 1.0.
 
-=head2 set_p_ratio($double)
+=head2 C<set_p_ratio($double)>
 
-Wrapper around Libpuzzle's function. Sets the size of the samples. Used in conjunction with C<set_lambdas> to get more or less precise signatures.
-
-C<puzzle_set(3)> says,
-
-The "p ratio" determines the size of that zone. The default is 2.0, and that ratio mimics the behavior that is described in the reference algorithm.
-
-=head2 set_max_width
-
-Wrapper around Libpuzzle's function. 
+Wrapper around Libpuzzle's function. Sets the size of the samples. Used in
+conjunction with C<set_lambdas> to get more or less precise signatures.
 
 C<puzzle_set(3)> says,
 
-In order to avoid CPU starvation, pictures won't be processed if their width or height is larger than 3000 pixels.
+The "p ratio" determines the size of that zone. The default is 2.0, and that
+ratio mimics the behavior that is described in the reference algorithm.
 
-=head2 set_max_height
+=head2 C<set_max_width($integer)>
+
+Wrapper around Libpuzzle's function.
+
+C<puzzle_set(3)> says,
+
+In order to avoid CPU starvation, pictures won't be processed if their width or
+height is larger than 3000 pixels.
+
+=head2 C<set_max_height($integer)>
 
 Wrapper around Libpuzzle's function.
 
 See L<set_max_width>.
 
-=head2 set_noise_cutoff
+=head2 C<set_noise_cutoff($integer)>
 
-Wrapper around Libpuzzle's function. 
-
-C<puzzle_set(3)> says,
-
-The noise cutoff defaults to 2. If you raise that value, more zones with little difference of intensity will be considered as similar.
-
-Unless you have very specialized sets of pictures, you probably don't want to change this.
-
-=head2 set_autocrop
-
-Wrapper around Libpuzzle's function. 
+Wrapper around Libpuzzle's function.
 
 C<puzzle_set(3)> says,
 
-By default, featureless borders of the original image are ignored. The size of each border depends on the sum of absolute values of differences between adjacent pixels, relative to the total sum.
+The noise cutoff defaults to 2. If you raise that value, more zones with little
+difference of intensity will be considered as similar.
 
-That feature can be disabled with C<puzzle_set_autocrop(0)> Any other value will enable it.
+Unless you have very specialized sets of pictures, you probably don't want to
+change this.
 
-C<puzzle_set_contrast_barrier_for_cropping()> changes the tolerance. The default value is 5. Less shaves less, more shaves more.
+=head2 C<set_autocrop(1|0)>
 
-C<puzzle_set_max_cropping_ratio()> This is a safe-guard against unwanted excessive auto-cropping.
+Wrapper around Libpuzzle's function.
 
-The default (0.25) means that no more than 25% of the total width (or height) will ever be shaved.
+C<puzzle_set(3)> says,
 
-=head2 set_contrast_barrier_for_cropping
+By default, featureless borders of the original image are ignored. The size
+of each border depends on the sum of absolute values of differences between
+adjacent pixels, relative to the total sum.
 
-Wrapper around Libpuzzle's function. 
+That feature can be disabled with C<puzzle_set_autocrop(0)> Any other value will
+enable it.
+
+C<puzzle_set_contrast_barrier_for_cropping()> changes the tolerance. The default
+value is 5. Less shaves less, more shaves more.
+
+C<puzzle_set_max_cropping_ratio()> This is a safe-guard against unwanted
+excessive auto-cropping.
+
+The default (0.25) means that no more than 25% of the total width (or height)
+will ever be shaved.
+
+=head2 C<set_contrast_barrier_for_cropping($integer)>
+
+Wrapper around Libpuzzle's function.
 
 See L<set_autocrop> for details.
 
-=head2 set_max_cropping_ratio
+=head2 C<set_max_cropping_ratio($double)>
 
-Wrapper around Libpuzzle's function. 
+Wrapper around Libpuzzle's function.
 
 See L<set_autocrop> for details.
 
-=head2 vector_euclidean_length
+=head2 C<vector_euclidean_length()>
 
-Wrapper around Libpuzzle's function. Returns a length value for the signature, used when computing distances between two images in C<vector_normalized_distance>.
+Wrapper around Libpuzzle's function. Returns a length value for
+the signature, used when computing distances between two images in
+C<vector_normalized_distance>.
 
-=head2 vector_normalized_distance
+=head2 C<vector_normalized_distance(Image::Libpuzzle $instance2)>
 
-=head2 is_similar
+Returns the computed distance between two C<Image::Libpuzzle> instances.
+
+ my $distance = $instance1->vector_normalized_distance($instance2);
+
+=head2 C<is_similar(Image::Libpuzzle $instance2)>
 
 Convenience methods, compares images using C<PUZZLE_CVEC_SIMILARITY_THRESHOLD>
 
-=head2 is_very_similar
+=head2 C<is_very_similar(Image::Libpuzzle $instance2)>
 
-Convenience methods, compares images using C<PUZZLE_CVEC_SIMILARITY_LOW_THRESHOLD>
+Convenience methods, compares images using
+C<PUZZLE_CVEC_SIMILARITY_LOW_THRESHOLD>
 
-=head2 is_most_similar
+=head2 C<is_most_similar(Image::Libpuzzle $instance2)>
 
 Convenience methods, compares images using C<PUZZLE_CVEC_SIMILARITY_LOWER_THRESHOLD>
 
-=head2 PUZZLE_VERSION_MAJOR
+=head2 C<PUZZLE_VERSION_MAJOR()>
 
 Returns constant defining major version.
 
-=head2 PUZZLE_VERSION_MINOR
+=head2 C<PUZZLE_VERSION_MINOR()>
 
 Returns constant defining minor version.
 
-=head2 PUZZLE_CVEC_SIMILARITY_THRESHOLD
+=head2 C<PUZZLE_CVEC_SIMILARITY_THRESHOLD()>
 
-Returns constant defining the average normalized distance cutoff for considering two images as similar. Used by C<is_similar>.
+Returns constant defining the average normalized distance cutoff for considering
+two images as similar. Used by C<is_similar>.
 
-=head2 PUZZLE_CVEC_SIMILARITY_HIGH_THRESHOLD
+=head2 C<PUZZLE_CVEC_SIMILARITY_HIGH_THRESHOLD()>
 
-Returns constant defining the upper limit normalized distance cutoff for considering two images as similar. Must be used directly.
+Returns constant defining the upper limit normalized distance cutoff for
+considering two images as similar. Must be used directly.
 
-=head2 PUZZLE_CVEC_SIMILARITY_LOW_THRESHOLD
+=head2 C<PUZZLE_CVEC_SIMILARITY_LOW_THRESHOLD()>
 
-Returns constant defining more precise normalized distance cutoff for considering two images as similar. Used by C<is_very_similar>.
+Returns constant defining more precise normalized distance cutoff for
+considering two images as similar. Used by C<is_very_similar>.
 
-=head2 PUZZLE_CVEC_SIMILARITY_LOWER_THRESHOLD
+=head2 C<PUZZLE_CVEC_SIMILARITY_LOWER_THRESHOLD()>
 
-Returns constant defining the most precise normalized distance cutoff for considering two images as similar. Used by C<is_most_similar>.
+Returns constant defining the most precise normalized distance cutoff for
+considering two images as similar. Used by C<is_most_similar>.
 
 =head1 Pure Perl METHODS AND SUBROUTINES
 
-=head2 C<signature_as_string>
+=head2 C<signature_as_string()>
 
-Returns a stringified version of the signature. The string is generated by unpack'ing
-into an array of ASCII characters (C*). Before the array of character codes is joined
-into a string, they are padded. For example, 1 turns into 001; 25 turns into 025; 211 remains the same.
+Returns a stringified version of the signature. The string is generated by
+unpack'ing into an array of ASCII characters (C*). Before the array of character
+codes is joined into a string, they are padded. For example, 1 turns into 001;
+25 turns into 025; 211 remains the same.
 
-=head2 C<signature_as_ngrams>
+=head2 C<signature_as_ngrams()>
 
-Takes the output of C<signature_as_string> and returns an ARRAY ref of C<words> of size
-C<$ngram_size>. The default, C<$DEFAULT_NGRAM_SIZE> is set to 10. An optional argument
-may be passed to override this default.
+Takes the output of C<signature_as_string> and returns an ARRAY ref of C<words>
+of size C<$ngram_size>. The default, C<$DEFAULT_NGRAM_SIZE> is set to 10. An
+optional argument may be passed to override this default.
 
-The paragraph of ngrams is constructed in a method consistent with the one described
-in the following link:
+The paragraph of ngrams is constructed in a method consistent with the one
+described in the following link:
 
-L<http://stackoverflow.com/questions/9703762/libpuzzle-indexing-millions-of-pictures>
+L<http://stackoverflow.com/questions/9703762/libpuzzle-indexing-millions-of-pict
+ures>
 
 =head1 ENVIRONMENT
 
-This module assumes that libpuzzle is installed and puzzle.h is able to be found in a default LIBRARY path.
+This module assumes that libpuzzle is installed and puzzle.h is able to be found
+in a default LIBRARY path.
 
-Libpuzzle is available via most Ports/package repos. It also builds easily, though it requires C<libgd.so>.
+Libpuzzle is available via most Ports/package repos. It also builds easily,
+though it requires C<libgd.so>.
 
 Also see, L<http://www.pureftpd.org/project/libpuzzle>.
+
+=head2 Package Variables
+
+There also exist corresponding methods to return these. Changing these package variables
+affects nothing at this time.
+
+=over 4
+
+=item C<Image::Libpuzzle::PUZZLE_VERSION_MAJOR>
+
+=item C<Image::Libpuzzle::PUZZLE_VERSION_MINOR>
+
+=item C<Image::Libpuzzle::PUZZLE_CVEC_SIMILARITY_THRESHOLD>
+
+=item C<Image::Libpuzzle::PUZZLE_CVEC_SIMILARITY_HIGH_THRESHOLD>
+
+=item C<Image::Libpuzzle::PUZZLE_CVEC_SIMILARITY_LOW_THRESHOLD>
+
+=item C<Image::Libpuzzle::PUZZLE_CVEC_SIMILARITY_LOWER_THRESHOLD>
+
+=back
 
 =head1 BUGS AND LIMITATIONS
 
@@ -338,17 +400,17 @@ Please report them via L<https://github.com/estrabd/p5-puzzle-xs/issues>.
 
 Brett Estrade <estrabd@gmail.com>
 
-=head2 THANKS
+=head2 THANK YOU
 
-My good and ridiculously smart friend, Xan Tronix (~xan), helped me patiently as I was working through n00b
-XS bits during the writing of this module.
+My good and ridiculously smart friend, Xan Tronix (~xan), helped me patiently as
+I was working through n00b XS bits during the writing of this module.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2015 by Brett Estrade
+Copyright (C) 2015 by B. Estrade
 
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself, either Perl version 5.14.4 or,
-at your option, any later version of Perl 5 you may have available.
+This library is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself, either Perl version 5.14.4 or, at your option,
+any later version of Perl 5 you may have available.
 
 =cut
