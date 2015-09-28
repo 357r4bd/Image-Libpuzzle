@@ -167,11 +167,12 @@ but may be added in the future if there is demand.
 
 =head1 XS METHODS AND SUBROUTINES
 
-=head2 new
+=head2 C<new()>
 
-Constructor, returns a C<Image::Libpuzzle> reference.
+Constructor, returns a C<Image::Libpuzzle> reference. Use C<set_*> methods to change the
+default values outlined in C<man puzzle_set(3)>.
 
-=head2 C<get_cvec>
+=head2 C<get_cvec()>
 
 Returns a Image::Libpuzzle::Cvec reference, currently one can't do much with
 this.
@@ -180,9 +181,11 @@ this.
 
 Generates the signature for the given file.
 
-=head2 C<get_signature>
+=head2 C<get_signature()>
 
-Returns the signature in an unprintable form.
+Returns the signature in the original form.
+
+Assumes C<fill_cvec_from_file> has been called on a valid image already.
 
 =head2 C<set_lambdas($integer)>
 
@@ -192,7 +195,7 @@ image.
 The default is set in puzzle.h is 9; i.e., by default, pictures are divided in 9
 x 9 blocks.
 
-C<puzzle_set(3)> says,
+C<man puzzle_set(3)> says,
 
 For large databases, for complex images, for images with a lot of text or for
 sets of near-similar images, it might be better to raise that value to 11 or
@@ -221,7 +224,7 @@ The lowest acceptable value is 1.0.
 Wrapper around Libpuzzle's function. Sets the size of the samples. Used in
 conjunction with C<set_lambdas> to get more or less precise signatures.
 
-C<puzzle_set(3)> says,
+C<man puzzle_set(3)> says,
 
 The "p ratio" determines the size of that zone. The default is 2.0, and that
 ratio mimics the behavior that is described in the reference algorithm.
@@ -230,7 +233,7 @@ ratio mimics the behavior that is described in the reference algorithm.
 
 Wrapper around Libpuzzle's function.
 
-C<puzzle_set(3)> says,
+C<man puzzle_set(3)> says,
 
 In order to avoid CPU starvation, pictures won't be processed if their width or
 height is larger than 3000 pixels.
@@ -239,13 +242,13 @@ height is larger than 3000 pixels.
 
 Wrapper around Libpuzzle's function.
 
-See L<set_max_width>.
+See C<set_max_width>.
 
 =head2 C<set_noise_cutoff($integer)>
 
 Wrapper around Libpuzzle's function.
 
-C<puzzle_set(3)> says,
+C<man puzzle_set(3)> says,
 
 The noise cutoff defaults to 2. If you raise that value, more zones with little
 difference of intensity will be considered as similar.
@@ -257,7 +260,7 @@ change this.
 
 Wrapper around Libpuzzle's function.
 
-C<puzzle_set(3)> says,
+C<man puzzle_set(3)> says,
 
 By default, featureless borders of the original image are ignored. The size
 of each border depends on the sum of absolute values of differences between
@@ -279,13 +282,13 @@ will ever be shaved.
 
 Wrapper around Libpuzzle's function.
 
-See L<set_autocrop> for details.
+See C<set_autocrop> for details.
 
 =head2 C<set_max_cropping_ratio($double)>
 
 Wrapper around Libpuzzle's function.
 
-See L<set_autocrop> for details.
+See C<set_autocrop> for details.
 
 =head2 C<vector_euclidean_length()>
 
@@ -349,6 +352,8 @@ unpack'ing into an array of ASCII characters (C*). Before the array of character
 codes is joined into a string, they are padded. For example, 1 turns into 001;
 25 turns into 025; 211 remains the same.
 
+Assumes C<fill_cvec_from_file> has been called on a valid image already.
+
 =head2 C<signature_as_ngrams()>
 
 Takes the output of C<signature_as_string> and returns an ARRAY ref of C<words>
@@ -360,6 +365,8 @@ described in the following link:
 
 L<http://stackoverflow.com/questions/9703762/libpuzzle-indexing-millions-of-pict
 ures>
+
+Assumes C<fill_cvec_from_file> has been called on a valid image already.
 
 =head1 ENVIRONMENT
 
@@ -398,7 +405,7 @@ Please report them via L<https://github.com/estrabd/p5-puzzle-xs/issues>.
 
 =head1 AUTHOR
 
-Brett Estrade <estrabd@gmail.com>
+B. Estrade <estrabd@gmail.com>
 
 =head2 THANK YOU
 
