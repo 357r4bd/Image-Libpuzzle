@@ -1,6 +1,7 @@
 Revision history for Perl extension Puzzle.
 
 0.05 2015-??-?? ESTRABD
+    - Added github repo to metadata
     - Dropped the check on $] >= 5.005 around ABSTRACT_FROM and AUTHOR
       in Makefile.PL, since the first line is requiring Perl 5.014004.
 
