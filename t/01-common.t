@@ -28,17 +28,29 @@ ok $sig1, q{Signature for picture 1 defined};
 my $sig2 = $p2->fill_cvec_from_file($pic2);
 ok $sig2, q{Signature for picture 2 defined};
 
-my $string1 = $p1->signature_as_string;
-ok $string1, q{Stringified signature 1 is not empty};
+my $string1 = $p1->signature_as_char_string;
+ok $string1, q{Stringified as char signature 1 is not empty};
 
-my $words1_ref = $p1->signature_as_ngrams;
+my $hex_string1 = $p1->signature_as_hex_string;
+ok $hex_string1, q{Stringified as char signature 1 is not empty};
+
+my $words1_ref = $p1->signature_as_char_ngrams;
 ok @$words1_ref, q{Ngrams not empty for signature 1};
 
-my $string2 = $p2->signature_as_string;
-ok $string2, q{Stringified signature 2 is not empty};
+my $hex_words1_ref = $p1->signature_as_hex_ngrams;
+ok @$hex_words1_ref, q{Ngrams not empty for signature 1};
 
-my $words2_ref = $p2->signature_as_ngrams;
+my $string2 = $p2->signature_as_char_string;
+ok $string2, q{Stringified char signature 2 is not empty};
+
+my $hex_string2 = $p2->signature_as_hex_string;
+ok $hex_string2, q{Stringified as char signature 2 is not empty};
+
+my $words2_ref = $p2->signature_as_char_ngrams;
 ok @$words2_ref, q{Ngrams not empty for signature 2};
+
+my $hex_words2_ref = $p2->signature_as_hex_ngrams;
+ok @$hex_words2_ref, q{Ngrams not empty for signature 2};
 
 ok $p1->vector_normalized_distance($p2) > 0,
   q{Signature distance is greater than 0};
