@@ -3,7 +3,7 @@ package Image::Libpuzzle;
 use strict;
 use warnings;
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 require XSLoader;
 XSLoader::load('Image::Libpuzzle', $VERSION);
 
@@ -324,6 +324,15 @@ C<vector_normalized_distance>.
 Returns the computed distance between two C<Image::Libpuzzle> instances.
 
  my $distance = $instance1->vector_normalized_distance($instance2);
+
+NOTE: internally, "fix_for_texts" is set to 1; there is currently no way to toggle this behavior.
+
+According to C<man 3 libpuzzle>: 
+
+If the fix_for_texts of puzzle_vector_normalized_distance() is 1 , a fix
+is applied to the computation in order to deal with bitmap pictures that
+contain text. That fix is recommended, as it allows using the same
+threshold for that kind of picture as for generic pictures.
 
 =head2 C<is_similar(Image::Libpuzzle $instance2)>
 

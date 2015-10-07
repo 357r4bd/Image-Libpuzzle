@@ -207,7 +207,7 @@ libpuzzle_vector_normalized_distance(self, other)
     Image::Libpuzzle other;
 
     CODE:
-      RETVAL = puzzle_vector_normalized_distance(&self->context, &self->cvec, &other->cvec, 0);
+      RETVAL = puzzle_vector_normalized_distance(&self->context, &self->cvec, &other->cvec, 1);
 
     OUTPUT:
       RETVAL
