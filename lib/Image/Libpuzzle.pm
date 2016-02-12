@@ -164,17 +164,17 @@ L<http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.104.2585&rep=rep1&typ
 
 =head2 Working With Signatures
 
-Signatures are typically not printable date, so one may either use the native
+Signatures are typically not printable data, so one may either use the native
 Libpuzzle methods to work with them, such as C<vector_euclidean_length> and
 C<vector_normalized_distance>.
 
 C<Image::Libpuzzle> provides two methods for generating signatures in a
 printable form that may be used to deal with signatures in a more printable way,
-C<signature_as_char_string> and C<signature_as_ngrans>. See below for more details.
+L</signature_as_char_string> and L</signature_as_ngrams>. See below for more details.
 
 =head2 Comparing Millions of Images
 
-This Stack Overflow URL seems to be the best resources for addressing this
+This Stack Overflow URL seems to be the best resource for addressing this
 question:
 
 L<http://stackoverflow.com/questions/9703762/libpuzzle-indexing-millions-of-pictures>
@@ -215,7 +215,7 @@ Assumes C<fill_cvec_from_file> has been called on a valid image already.
 Wrapper around Libpuzzle's function. Sets the number of samples taken for each
 image.
 
-The default is set in puzzle.h is 9; i.e., by default, pictures are divided in 9
+The default set in puzzle.h is 9; i.e., by default, pictures are divided in 9
 x 9 blocks.
 
 C<man puzzle_set(3)> says,
@@ -329,10 +329,14 @@ NOTE: internally, "fix_for_texts" is set to 1; there is currently no way to togg
 
 According to C<man 3 libpuzzle>: 
 
-If the fix_for_texts of puzzle_vector_normalized_distance() is 1 , a fix
+=over
+
+If the fix_for_texts of puzzle_vector_normalized_distance() is 1, a fix
 is applied to the computation in order to deal with bitmap pictures that
 contain text. That fix is recommended, as it allows using the same
 threshold for that kind of picture as for generic pictures.
+
+=back
 
 =head2 C<is_similar(Image::Libpuzzle $instance2)>
 
