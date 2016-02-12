@@ -1,3 +1,4 @@
+inc/Devel/CheckLib.pm
 Changes
 MANIFEST
 Makefile.PL

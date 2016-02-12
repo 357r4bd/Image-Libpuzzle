@@ -1,5 +1,13 @@
 use 5.014004;
 use ExtUtils::MakeMaker;
+
+# Check that the local system has libpuzzle installed using
+# Devel::CheckLib.
+
+use lib 'inc';
+use Devel::CheckLib;
+check_lib_or_exit (lib => 'puzzle', header => 'puzzle.h');
+
 # See lib/ExtUtils/MakeMaker.pm for details of how to influence
 # the contents of the Makefile that is written.
 my $repo = 'https://github.com/estrabd/Image-Libpuzzle';
