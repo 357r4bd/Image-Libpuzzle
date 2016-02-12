@@ -2,6 +2,7 @@ use 5.014004;
 use ExtUtils::MakeMaker;
 # See lib/ExtUtils/MakeMaker.pm for details of how to influence
 # the contents of the Makefile that is written.
+my $repo = 'https://github.com/estrabd/Image-Libpuzzle';
 WriteMakefile(
     NAME              => 'Image::Libpuzzle',
     VERSION_FROM      => 'lib/Image/Libpuzzle.pm', # finds $VERSION
@@ -16,8 +17,11 @@ WriteMakefile(
         resources => {
             repository  => {
                 type => 'git',
-                web  => 'https://github.com/estrabd/Image-Libpuzzle',
-                url  => 'https://github.com/estrabd/Image-Libpuzzle.git',
+                web  => $repo,
+                url  => "$repo.git",
+            },
+            bugtracker => {
+                web => "$repo/issues",
             },
         },
     },
