@@ -1,0 +1,62 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+use Image::Libpuzzle ();
+
+my $ngram_size = $Image::Libpuzzle::DEFAULT_NGRAM_SIZE;
+
+if ($ARGV[1] and int $ARGV[1] > 0) {
+  $ngram_size = int $ARGV[1];
+}
+if ($ARGV[1] and int $ARGV[1] <= 0) {
+  warn qq{optional argument for ngram size must be >= 1; default is $Image::Libpuzzle::DEFAULT_NGRAM_SIZE};
+  exit 1;
+}
+
+my $p1 = Image::Libpuzzle->new;
+
+my $sig1 = $p1->fill_cvec_from_file($ARGV[0]);
+
+my $ngrams_ref = $p1->signature_as_char_ngrams($ngram_size);
+
+foreach my $n (@$ngrams_ref) {
+  print qq{$n\n};
+}
+
+__END__
+=pod
+
+=head1 NAME
+
+p5-puzzle-ngrams - produce list of ngrams from an image
+
+=head1 SYNOPSIS
+
+  $ p5-puzzle-sig path/to/image [ngram_size]
+
+=head1 DESCRIPTION
+
+This script outputs a ngrams of the character representation of an image as provide for in libpuzzle(3) using
+the bindings provided for by L<Image::Libpuzzle>.
+
+=head1 BUGS AND LIMITATIONS
+
+Currently this script accepts no options other than the name of the file to sign.
+
+Please report them via L<https://github.com/estrabd/p5-puzzle-xs/issues>.
+
+=head1 AUTHOR
+
+B. Estrade <estrabd@gmail.com>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (C) 2015 by B. Estrade
+
+This library is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself, either Perl version 5.14.4 or, at your option,
+any later version of Perl 5 you may have available.
+
+=cut

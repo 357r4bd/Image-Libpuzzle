@@ -20,3 +20,6 @@ t/pics/luxmarket_tshirt01_sheum.jpg
 typemap
 Libpuzzle.xs
 CONTRIBUTING
+bin/p5-puzzle-diff
+bin/p5-puzzle-sig
+bin/p5-puzzle-ngrams

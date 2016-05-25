@@ -1,0 +1,52 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+use Image::Libpuzzle ();
+
+my $p1 = Image::Libpuzzle->new;
+my $p2 = Image::Libpuzzle->new;
+
+my $sig1 = $p1->fill_cvec_from_file($ARGV[0]);
+my $sig2 = $p2->fill_cvec_from_file($ARGV[1]);
+
+print $p1->vector_normalized_distance($p2),qq{\n};
+
+__END__
+=pod
+
+=head1 NAME
+
+p5-puzzle-diff - output default distance between two images
+
+=head1 SYNOPSIS
+
+  $ p5-puzzle-diff path/to/image1 path/to/image2
+
+=head1 DESCRIPTION
+
+This script is an implementation of the puzzle-diff(8) utility provide with libpuzzle(3) using
+the bindings provided for by L<Image::Libpuzzle>.
+
+The output is the normalized distance between two images.
+
+=head1 BUGS AND LIMITATIONS
+
+Currently this script accepts no options other than the names of the image files to compare.
+
+Please report them via L<https://github.com/estrabd/p5-puzzle-xs/issues>.
+
+=head1 AUTHOR
+
+B. Estrade <estrabd@gmail.com>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (C) 2015 by B. Estrade
+
+This library is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself, either Perl version 5.14.4 or, at your option,
+any later version of Perl 5 you may have available.
+
+=cut
